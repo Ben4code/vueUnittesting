@@ -3,38 +3,24 @@
     <form v-if="!loading" class="form" v-on:submit.prevent="onSubmit">
       <div class="input-field">
         <label for="title">Title</label>
-        <input type="text" name="title" v-model="title" class="validate" />
-        <span class="helper-text" data-error="Title must not be empty"></span>
+        <input type="text" name="title" v-model="title" v-bind:class=" [errors.title ? 'invalid' : 'validate'] " />
+        <span class="helper-text" data-error="Title field must not be empty"></span>
       </div>
 
       <div class="input-field">
         <label for="body">Body</label>
-        <input type="text" name="body" v-model="body" class="validate" />
-        <span class="helper-text" data-error="body must not be empty"></span>
+        <input type="text" name="body" v-model="body" v-bind:class=" [errors.body ? 'invalid' : 'validate'] " />
+        <span class="helper-text" data-error="Body field must not be empty"></span>
       </div>
 
       <button type="submit" class="waves-effect waves-light btn btn-small blue">Add</button>
     </form>
 
-    <div v-else>
+    <div v-else-if="loading">
       <div class="progress">
         <div class="indeterminate"></div>
       </div>
     </div>
-
-    <!-- <div v-else class="preloader-wrapper big active">
-      <div class="spinner-layer spinner-blue-only">
-        <div class="circle-clipper left">
-          <div class="circle"></div>
-        </div>
-        <div class="gap-patch">
-          <div class="circle"></div>
-        </div>
-        <div class="circle-clipper right">
-          <div class="circle"></div>
-        </div>
-      </div>
-    </div> -->
 
   </div>
 </template>
@@ -48,12 +34,17 @@ export default {
     return {
       loading: false,
       title: "",
-      body: ""
+      body: "",
+      errors: ""
     };
   },
   methods: {
     onSubmit() {
       this.loading = true;
+      if(!this.validate()){
+        this.loading = false;
+        return;
+      }
       const post = {
         title: this.title,
         body: this.body
@@ -63,12 +54,29 @@ export default {
           this.loading = false;
           this.title = "";
           this.body = "";
-          console.log(response.data);
+          this.$emit('postCreated', response.data)
+          console.log(response);
         })
+        // .then(data => console.log(data))
         .catch(err => {
           this.loading = false;
           console.error(err);
         });
+    },
+
+    validate(){
+      this.errors = {}
+      if(this.title.trim() === ""){
+        this.errors.title = 'Title'
+      }
+      if(this.body.trim() === ""){
+        this.errors.body = 'Body'
+      }
+      if(Object.keys(this.errors).length > 0){
+        return false;
+      }else{
+        return true;
+      }
     }
   }
 };

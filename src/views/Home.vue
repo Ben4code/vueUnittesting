@@ -3,7 +3,7 @@
     <div class="postForm">
       <!-- Post Form -->
       <div class="carditem">
-        <PostForm />
+        <PostForm v-on:postCreated="updatePosts"/>
       </div>
     </div>
     <div class="card-list">
@@ -46,6 +46,12 @@ export default {
     return {
       posts: []
     };
+  },
+  methods: {
+    updatePosts(newPosts){
+      // this.posts = newPosts;
+      this.posts.unshift(newPosts)
+    }
   },
 
   created() {
