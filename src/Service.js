@@ -8,15 +8,18 @@ export const getPosts = () => {
 };
 
 export const addPost = (post) => {
+  const options = {
+    method: '',
+    url: 'https://jsonplaceholder.typicode.com/posts',
+    data: post,
+    headers: {"Content-type": "application/json; charset=UTF-8"}
+  }
+  
   if (post.id) {
-    return axios.put(`/posts/${post.id}`, post);
+    options.method = 'PUT'
+    return axios(options);
   } else {
-    const options = {
-      method: 'POST',
-      url: 'https://jsonplaceholder.typicode.com/posts',
-      data: post,
-      headers: {"Content-type": "application/json; charset=UTF-8"}
-    }
+    options.method = 'POST'
     return axios(options);
 
     // return fetch("https://jsonplaceholder.typicode.com/posts", {
@@ -35,5 +38,5 @@ export const getPost = (number) => {
 };
 
 export const deletePost = (id) => {
-  return axios.delete(`/posts/${id}`);
+  return axios.delete(`https://jsonplaceholder.typicode.com/posts/${id}`);
 };

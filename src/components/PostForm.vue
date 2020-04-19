@@ -57,7 +57,6 @@ export default {
           this.$emit('postCreated', response.data)
           console.log(response);
         })
-        // .then(data => console.log(data))
         .catch(err => {
           this.loading = false;
           console.error(err);

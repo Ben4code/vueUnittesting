@@ -22,8 +22,8 @@
           <p class="carditem-body">{{ post.body }}</p>
         </div>
         <div class="carditem-links">
-          <a href="#" class="btn btn-small blue">Edit</a>
-          <a href="#" class="btn btn-small red">Delete</a>
+          <a  v-on:click="updatePost(post)" class="btn btn-small blue">Edit</a>
+          <a  v-on:click="deletePost(post.id)" class="btn btn-small red">Delete</a>
         </div>
       </div>
     </div>
@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { getPosts } from "../Service";
+import { getPosts, addPost, deletePost } from "../Service";
 import PostForm from '../components/PostForm'
 
 
@@ -49,8 +49,14 @@ export default {
   },
   methods: {
     updatePosts(newPosts){
-      // this.posts = newPosts;
       this.posts.unshift(newPosts)
+    },
+    updatePost(post){
+      addPost(post).then(res => console.log(res.data)).catch(err => console.error(err));
+    },
+    deletePost(id){
+      console.log(id)
+      deletePost(id).then(res => console.log(res)).catch(err => console.error(err));
     }
   },
 
