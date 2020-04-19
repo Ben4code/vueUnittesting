@@ -7,8 +7,9 @@ export const getPosts = () => {
 };
 
 export const addPost = (post) => {
-  if (post.id) {
-    return axios.put('http://localhost:5000/api/posts/', post);
+  if (post._id) {
+    console.log(post)
+    return axios.post(`http://localhost:5000/api/posts/update`, post);
   } else {
     return axios.post('http://localhost:5000/api/posts/', post);
   }

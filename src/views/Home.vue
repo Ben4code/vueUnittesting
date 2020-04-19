@@ -3,7 +3,11 @@
     <div class="postForm">
       <!-- Post Form -->
       <div class="carditem">
-        <PostForm v-on:postCreated="addNewPosts"/>
+        <PostForm v-on:postCreated="addNewPosts" v-bind:editingPost="editingPost"/>
+        <br><div class="divider"></div><br>
+        <h6 class="center-align">Set number of posts</h6>
+        <input type="number" v-model="postLimit" >
+        <button class="btn btn-small orange waves-effect waves-light" v-on:click="setLimit()">Set Limit</button>
       </div>
     </div>
     <div class="card-list">
@@ -22,7 +26,7 @@
           <p class="carditem-body">{{ post.body }}</p>
         </div>
         <div class="carditem-links">
-          <a  v-on:click="updatePost(post)" class="btn btn-small blue">Edit</a>
+          <a  v-on:click="updatePost(post)" class="btn btn-small blue" >Edit</a>
           <a  v-on:click="deletePost(post._id)" class="btn btn-small red">Delete</a>
         </div>
       </div>
@@ -31,7 +35,7 @@
 </template>
 
 <script>
-import { getPosts, addPost, deletePost } from "../Service";
+import { getPosts, deletePost } from "../Service";
 import PostForm from '../components/PostForm'
 
 
@@ -44,7 +48,9 @@ export default {
 
   data() {
     return {
-      posts: []
+      posts: [],
+      postLimit: 20,
+      editingPost: {}
     };
   },
   methods: {
@@ -52,11 +58,19 @@ export default {
       this.posts.unshift(data);
     },
     updatePost(post){
-      addPost(post).then(res => console.log(res.data)).catch(err => console.error(err));
+      this.editingPost = post;
+      // addPost(post).then(res => console.log(res.data)).catch(err => console.error(err));
     },
     deletePost(id){
       deletePost(id).then(res => {
         this.posts = this.posts.filter(post => post._id !== res.data.data._id);
+      })
+      .catch(err => console.error(err));
+    },
+    setLimit(){
+      getPosts()
+      .then(res => {
+        this.posts  = res.data.data.reverse().splice(0, this.postLimit);
       })
       .catch(err => console.error(err));
     }
@@ -65,7 +79,7 @@ export default {
   created() {
     getPosts()
       .then(res => {
-        this.posts  = res.data.data.reverse().splice(0, 20);
+        this.posts  = res.data.data.reverse().splice(0, this.postLimit);
       })
       .catch(err => console.error(err));
   }

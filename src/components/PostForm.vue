@@ -13,7 +13,9 @@
         <span class="helper-text" data-error="Body field must not be empty"></span>
       </div>
 
-      <button type="submit" class="waves-effect waves-light btn btn-small blue">Add</button>
+      <button type="submit" class="waves-effect waves-light btn btn-small blue">
+        {{ id ? 'Update Post' : 'Add Post' }}
+      </button>
     </form>
 
     <div v-else-if="loading">
@@ -30,11 +32,24 @@ import { addPost } from "../Service";
 
 export default {
   name: "PostForm",
+  props: {
+    editingPost: Object
+  },
+  
+  watch: {
+    editingPost(post){
+      this.title = post.title;
+      this.body = post.body;
+      this.id = post._id;
+    }
+  },
+
   data() {
     return {
       loading: false,
       title: "",
       body: "",
+      id: null,
       errors: ""
     };
   },
@@ -46,6 +61,7 @@ export default {
         return;
       }
       const post = {
+        _id: this.id ? this.id : null,
         title: this.title,
         body: this.body
       };
@@ -54,6 +70,7 @@ export default {
           this.loading = false;
           this.title = "";
           this.body = "";
+          this.id = null;
           this.$emit('postCreated', response.data)
         })
         .catch(err => {

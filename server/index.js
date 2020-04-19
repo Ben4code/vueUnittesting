@@ -3,7 +3,7 @@ const morgan = require("morgan");
 const mongoose = require("mongoose");
 // const dotenv = require("dotenv");
 const cors = require("cors");
-// const bodyParser = require("body-parser");
+const bodyParser = require("body-parser");
 const config = require('./config/db');
 const posts = require('./routes/post')
 
@@ -16,8 +16,10 @@ app.use(cors({
 }));
 
 app.use(morgan("tiny"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: false }))
 
 
 // Posts route
