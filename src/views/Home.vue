@@ -3,7 +3,7 @@
     <div class="postForm">
       <!-- Post Form -->
       <div class="carditem">
-        <PostForm v-on:postCreated="updatePosts"/>
+        <PostForm v-on:postCreated="addNewPosts"/>
       </div>
     </div>
     <div class="card-list">
@@ -12,18 +12,18 @@
         v-for="(post, index) in posts"
         v-bind:item="post"
         v-bind:index="index"
-        v-bind:key="post.id"
+        v-bind:key="post._id"
       >
         <div class="">
           <p class="card-title">{{ post.title }}</p>
-          <p class="timestamp">{{post.id}}/06/2020</p>
+          <p class="timestamp">{{new Date(post.createdAt).toLocaleString('en-GB', { timeZone: 'UTC' }) }}</p>
         </div>
         <div>
           <p class="carditem-body">{{ post.body }}</p>
         </div>
         <div class="carditem-links">
           <a  v-on:click="updatePost(post)" class="btn btn-small blue">Edit</a>
-          <a  v-on:click="deletePost(post.id)" class="btn btn-small red">Delete</a>
+          <a  v-on:click="deletePost(post._id)" class="btn btn-small red">Delete</a>
         </div>
       </div>
     </div>
@@ -48,24 +48,24 @@ export default {
     };
   },
   methods: {
-    updatePosts(newPosts){
-      this.posts.unshift(newPosts)
+    addNewPosts({data}){
+      this.posts.unshift(data);
     },
     updatePost(post){
       addPost(post).then(res => console.log(res.data)).catch(err => console.error(err));
     },
     deletePost(id){
-      console.log(id)
-      deletePost(id).then(res => console.log(res)).catch(err => console.error(err));
+      deletePost(id).then(res => {
+        this.posts = this.posts.filter(post => post._id !== res.data.data._id);
+      })
+      .catch(err => console.error(err));
     }
   },
 
   created() {
     getPosts()
       .then(res => {
-        const postChunk = res.data.filter(item => item.id <= 10);
-        this.posts = postChunk;
-        // console.log(this.posts);
+        this.posts  = res.data.data.reverse().splice(0, 20);
       })
       .catch(err => console.error(err));
   }

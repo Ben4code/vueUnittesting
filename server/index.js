@@ -2,8 +2,8 @@ const express = require("express");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 // const dotenv = require("dotenv");
-// const cors = require("cors");
-const bodyParser = require("body-parser");
+const cors = require("cors");
+// const bodyParser = require("body-parser");
 const config = require('./config/db');
 const posts = require('./routes/post')
 
@@ -11,9 +11,14 @@ const app = express();
 
 //Middleware setup.
 // dotenv.config({path: './config/config.env'})
-// app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:8080'
+}));
+
 app.use(morgan("tiny"));
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }))
+
 
 // Posts route
 app.use('/api/posts/', posts)

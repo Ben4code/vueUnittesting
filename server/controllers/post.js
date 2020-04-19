@@ -1,40 +1,109 @@
-const Post = require('../model/post')
-
+const Post = require("../model/post");
 
 // @desc      Get all routes
 // @route     GET /api/posts
 // @access     Public
 exports.getPosts = async (req, res, next) => {
-  try{
+  try {
     const posts = await Post.find();
     return res.status(200).json({
       success: true,
       count: posts.length,
-      data: posts
-    })
-  }catch(err){
+      data: posts,
+    });
+  } catch (err) {
     return res.status(500).json({
       success: false,
-      error: 'Server error'
-    })
+      message: "Server error",
+      error: err,
+    });
   }
-  
-  res.send("From Controller")
-}
+};
 
+
+// @desc      Get one routes
+// @route     GET /api/posts
+// @access    Public
+exports.getOnePost = async (req, res, next) => {
+  try {
+    const post = await Post.findById(req.params.id)
+   
+    if(post === null ){
+      return res.status(404).json({
+        success: false,
+        message: "Post was not found.",
+      })
+    }
+    
+    return res.status(200).json({
+      success: true,
+      count: post.length,
+      data: post,
+    })
+    
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Unable complete request.",
+      error: err,
+    });
+  }
+};
 
 // @desc      Get one routes
 // @route     POST /api/posts
 // @access     Public
-exports.addPost = (req, res, next) => {
-  res.send("Post From Controller")
-}
-
-
+exports.addPost = async (req, res, next) => {
+  try {
+    const newPost = await Post.create(req.body);
+    return res.status(201).json({
+      success: true,
+      data: newPost
+    });
+  } catch (err) {
+    if (err.name === "ValidationError") {
+      const messages = Object.values(err.errors).map((val) => val.message);
+      return res.status(400).json({
+        success: false,
+        message: messages,
+        error: err,
+      });
+    } else {
+      return res.status(500).json({
+        success: false,
+        message: "Something went wrong with the request.",
+        error: err,
+      });
+    }
+  }
+};
 
 // @desc      Deelete one routes
 // @route     DELETE /api/posts/:id
 // @access    Public
-exports.deletePost = (req, res, next) => { 
-  res.send("Delete From Controller")
-}
+exports.deletePost = async (req, res, next) => {
+  try {
+    const deletePost = await Post.findById(req.params.id)
+   
+    if(deletePost === null ){
+      return res.status(404).json({
+        success: false,
+        message: "Post was not found.",
+      })
+    }
+    
+    await deletePost.remove();
+    return res.status(200).json({
+      success: true,
+      message: "Post was successfully removed.",
+      data: deletePost
+    })
+    
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Unable to delete post.",
+      error: err,
+    });
+  }
+};

@@ -1,35 +1,16 @@
 import axios from "axios";
 
-// axios.defaults.baseURL = 'https://jsonplaceholder.typicode.com';
-// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
 
 export const getPosts = () => {
-  return axios.get(`https://jsonplaceholder.typicode.com/posts`);
+  return axios.get(`http://localhost:5000/api/posts`);
 };
 
 export const addPost = (post) => {
-  const options = {
-    method: '',
-    url: 'https://jsonplaceholder.typicode.com/posts',
-    data: post,
-    headers: {"Content-type": "application/json; charset=UTF-8"}
-  }
-  
   if (post.id) {
-    options.method = 'PUT'
-    return axios(options);
+    return axios.put('http://localhost:5000/api/posts/', post);
   } else {
-    options.method = 'POST'
-    return axios(options);
-
-    // return fetch("https://jsonplaceholder.typicode.com/posts", {
-    //   method: "POST",
-    //   body: JSON.stringify(post),
-    //   headers: {
-    //     "Content-type": "application/json; charset=UTF-8",
-    //   },
-    // });
-
+    return axios.post('http://localhost:5000/api/posts/', post);
   }
 };
 
@@ -38,5 +19,5 @@ export const getPost = (number) => {
 };
 
 export const deletePost = (id) => {
-  return axios.delete(`https://jsonplaceholder.typicode.com/posts/${id}`);
+  return axios.delete(`http://localhost:5000/api/posts/${id}`);
 };
