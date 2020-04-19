@@ -55,11 +55,12 @@ export default {
   },
   methods: {
     addNewPosts({data}){
-      this.posts.unshift(data);
+      const valIndex = this.posts.findIndex(item => item._id === data._id);
+      console.log(valIndex)
+      this.posts.splice(valIndex, 1, data);
     },
     updatePost(post){
       this.editingPost = post;
-      // addPost(post).then(res => console.log(res.data)).catch(err => console.error(err));
     },
     deletePost(id){
       deletePost(id).then(res => {
